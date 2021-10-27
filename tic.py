@@ -9,4 +9,4 @@ class Tic():
 
     @classmethod
     def toc(cls):
-        print(time.time() - cls.ttime)
+        print('time:{0:.6f}s'.format(time.time() - cls.ttime))
