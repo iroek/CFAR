@@ -31,7 +31,7 @@ if __name__=='__main__':
         arg['HALF_CFAR_UNITS'] = HALF_CFAR_UNITS
          
         # search
-        with Pool(16) as p:
+        with Pool(arg.get('threading', 4)) as p:
             res = p.map(cfar_one_improved, [dict_merge(arg, {'index':(i,j)}) for i in range(inputImg.shape[0]-CFAR_UNITS) for j in range(inputImg.shape[1]-CFAR_UNITS)])
         for p in res:
             estimateImg[p[0], p[1]] = p[2]

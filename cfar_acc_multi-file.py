@@ -49,6 +49,6 @@ if __name__=='__main__':
     img_paths = getFiles(arg.get('root'), '.jpg')    
     for img_path in img_paths:
         Tic.tic()
-        with Pool(10) as pool:
+        with Pool(arg.get('threading', 4)) as pool:
             pool.map(cfar, [dict_merge(arg, {'img_path':img_path, 'GUARD_CELLS':GUARD_CELLS, 'bc':GUARD_CELLS*RATIO, 'al':ALPHA}) for ALPHA in [1.2, 1.4, 1.6, 1.8, 2.] for GUARD_CELLS in [30, 40, 50, 60] for RATIO in [1,]]) 
         Tic.toc()

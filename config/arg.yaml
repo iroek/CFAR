@@ -1,13 +1,19 @@
-# configs
-GUARD_CELLS: 50
-BG_CELLS: 50
+# cfar
+GUARD_CELLS: 30
+BG_CELLS: 30
 ALPHA: 1.8
 
-#path
-OUTPUT_IMG_DIR: './test_out/'
-root: './test/'
+# image pyramid
+ratio: 0.7071
+layers: 2
 
-saveResult: True
-cropEdge: True
+# path
+OUTPUT_IMG_DIR: 'test1_out'
+root: 'test1'
+
+# configs
+saveResult: True     # save to file
+cropEdge: True       # reset edge pixs to zero, something looks like 'reversed padding'
 threading: 10
 useGPU: True
+measureCommand: True # show running time
