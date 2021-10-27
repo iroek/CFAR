@@ -1,0 +1,11 @@
+# configs
+GUARD_CELLS: 50
+BG_CELLS: 50
+ALPHA: 1.8
+
+#path
+OUTPUT_IMG_DIR: './test_out/'
+root: './test/'
+
+saveResult: True
+cropEdge: True
