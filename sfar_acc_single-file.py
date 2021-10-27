@@ -10,9 +10,9 @@ from multiprocessing import Pool
 from sfar_once import *
 
 # configs
-GUARD_CELLS = 10
-BG_CELLS    = 5
-ALPHA       = 2
+GUARD_CELLS = 50
+BG_CELLS    = 50
+ALPHA       = 1.8
 
 #path
 OUTPUT_IMG_DIR = "./test_out/"

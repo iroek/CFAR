@@ -54,8 +54,8 @@ if __name__=='__main__':
     for img in imgs:
         img_path=root+img
         Tic.tic()
-        with Pool(12) as pool:
-            pool.map(cfar, [{'img_path':img_path, 'gc':GUARD_CELLS, 'bc':BG_CELLS, 'al':ALPHA} for ALPHA in [1.6, 1.8, 2] for GUARD_CELLS in range(15, 25) for BG_CELLS in range(5,15)]) 
+        with Pool(10) as pool:
+            pool.map(cfar, [{'img_path':img_path, 'gc':GUARD_CELLS, 'bc':GUARD_CELLS, 'al':ALPHA} for ALPHA in [1.2, 1.4, 1.6, 1.8, 2.] for GUARD_CELLS in [30, 40, 50, 60] for BG_CELLS in [5,]]) 
         Tic.toc()
 
     # with Pool(16) as pool:

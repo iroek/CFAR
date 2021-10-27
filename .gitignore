@@ -1,2 +1,5 @@
 test*/
 __pycache__/
+model/
+*.jpg
+*.zip
