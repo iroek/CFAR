@@ -7,7 +7,7 @@ import time
 import os
 from tic import Tic
 from multiprocessing import Pool
-from sfar_once import *
+from cfar_once import *
 
 # configs
 GUARD_CELLS = 50
@@ -39,7 +39,7 @@ if __name__=='__main__':
          
         # search
         with Pool(16) as p:
-            res = p.map(sfar_one_improved, [dict_merge(arg, {'index':(i,j)}) for i in range(inputImg.shape[0]-CFAR_UNITS) for j in range(inputImg.shape[1]-CFAR_UNITS)])
+            res = p.map(cfar_one_improved, [dict_merge(arg, {'index':(i,j)}) for i in range(inputImg.shape[0]-CFAR_UNITS) for j in range(inputImg.shape[1]-CFAR_UNITS)])
         for p in res:
             estimateImg[p[0], p[1]] = p[2]
 

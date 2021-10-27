@@ -1,6 +1,6 @@
 import numpy as np
 
-def sfar_one(arg):
+def cfar_one(arg):
     i,j             = arg.get('index')
     gc              = arg.get('gc')
     bc              = arg.get('bc')
@@ -19,7 +19,7 @@ def sfar_one(arg):
     else:
         return (center_cell_x, center_cell_y, 0)
 
-def sfar_one_improved(arg):
+def cfar_one_improved(arg):
     
     i,j             = arg.get('index')
     gc              = arg.get('gc')

@@ -7,7 +7,7 @@ import time
 import os
 from tic import Tic
 from multiprocessing import Pool
-from sfar_once import *
+from cfar_once import *
 
 # configs
 GUARD_CELLS = 10
@@ -39,7 +39,7 @@ def cfar(arg):
     res = list()
     for i in range(inputImg.shape[0]-CFAR_UNITS):
         for j in range(inputImg.shape[1]-CFAR_UNITS):
-            res.append(sfar_one_improved(dict_merge(arg, {'index':(i,j)}) ))
+            res.append(cfar_one_improved(dict_merge(arg, {'index':(i,j)}) ))
     for p in res:
         estimateImg[p[0], p[1]] = p[2]
 
