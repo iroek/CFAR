@@ -9,25 +9,18 @@ from tic import Tic
 from multiprocessing import Pool
 from cfar_once import *
 
-# configs
-GUARD_CELLS = 50
-BG_CELLS    = 50
-ALPHA       = 1.8
-
-#path
-OUTPUT_IMG_DIR = "./test_out/"
-root='./test/'
-
 
 if __name__=='__main__':
+    from utils import getFiles, get_yaml_data
+    arg = get_yaml_data('config/arg.yaml')
 
     #2D-CA-CFAR
     def cfar(arg):
         # print(arg)
         img_path    = arg.get('img_path')
-        gc          = arg.get('gc')
-        bc          = arg.get('bc')
-        al          = arg.get('al')
+        gc          = arg.get('GUARD_CELLS')
+        bc          = arg.get('BG_CELLS')
+        al          = arg.get('ALPHA')
         inputImg    = cv2.imread(img_path, 0).astype(float)
         out_name    = os.path.basename(img_path).split('.')[0]
         estimateImg = np.zeros((inputImg.shape[0], inputImg.shape[1]), np.uint8)
@@ -44,12 +37,17 @@ if __name__=='__main__':
             estimateImg[p[0], p[1]] = p[2]
 
         # output
-        tmpName = OUTPUT_IMG_DIR + f"{out_name}_{gc}_{bc}_{al}.png"
-        cv2.imwrite(tmpName, estimateImg)
+        if arg.get('saveResult'):
+            tmpName = os.path.join(arg.get('OUTPUT_IMG_DIR'), f"{out_name}_{gc}_{bc}_{al}.png")
+            cv2.imwrite(tmpName, estimateImg)
 
-    imgs=os.listdir(root)
-    for img in imgs:
-        img_path=root+img
+        return estimateImg
+
+        
+    img_paths = getFiles(arg.get('root'), '.jpg')
+    for img_path in img_paths:
+        print(img_path, end=' ')
         Tic.tic()
-        cfar({'img_path':img_path, 'gc':GUARD_CELLS, 'bc':BG_CELLS, 'al':ALPHA})
+        arg.update({'img_path':img_path})
+        cfar(arg)
         Tic.toc()

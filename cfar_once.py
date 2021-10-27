@@ -22,9 +22,9 @@ def cfar_one(arg):
 def cfar_one_improved(arg):
     
     i,j             = arg.get('index')
-    gc              = arg.get('gc')
-    bc              = arg.get('bc')
-    al              = arg.get('al')
+    gc              = arg.get('GUARD_CELLS')
+    bc              = arg.get('BG_CELLS')
+    al              = arg.get('ALPHA')
     inputImg        = arg['inputImg']
     CFAR_UNITS      = arg['CFAR_UNITS']
     HALF_CFAR_UNITS = arg['HALF_CFAR_UNITS']
