@@ -11,6 +11,10 @@ import csv
 from skimage import transform, io
 import yaml
 
+def dict_merge(dict1, dict2):
+    dict2.update(dict1)
+    return(dict2) 
+    
 def get_yaml_data(yaml_file):
     with open(yaml_file, 'r', encoding="utf-8") as file:
         file_data = file.read()

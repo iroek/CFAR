@@ -1,17 +1,17 @@
-# import
-import sys
-import cv2
-import numpy as np
-import random
-import time
-import os
-from tic import Tic
-from multiprocessing import Pool
-from cfar_once import *
-
-
 if __name__=='__main__':
-    from utils import getFiles, get_yaml_data
+
+    # import
+    import sys
+    import cv2
+    import numpy as np
+    import random
+    import time
+    import os
+    from tic import Tic
+    from multiprocessing import Pool
+    from cfar_once import *
+    from utils import getFiles, get_yaml_data, dict_merge
+
     arg = get_yaml_data('config/arg.yaml')
 
     #2D-CA-CFAR
@@ -48,6 +48,5 @@ if __name__=='__main__':
     for img_path in img_paths:
         print(img_path, end=' ')
         Tic.tic()
-        arg.update({'img_path':img_path})
-        cfar(arg)
+        cfar(dict_merge(arg, {'img_path':img_path}))
         Tic.toc()

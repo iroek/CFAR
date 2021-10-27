@@ -9,3 +9,5 @@ root: './test/'
 
 saveResult: True
 cropEdge: True
+threading: 10
+useGPU: False

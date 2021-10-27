@@ -1,5 +1,5 @@
 #%%
-from genericpath import isdir
+# from genericpath import isdir
 import torch
 from torch import nn
 # from torch._C import uint8
@@ -8,7 +8,10 @@ from torch import nn
 # from torchvision.transforms import ToTensor, Lambda, Compose
 # import matplotlib.pyplot as plt
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+from utils import getFiles, get_yaml_data, dict_merge
+arg = get_yaml_data('config/arg.yaml')
+
+device = "cuda" if torch.cuda.is_available() and arg.get('useGPU', False) else "cpu"
 print("Using {} device".format(device))
 
 
@@ -139,9 +142,6 @@ if __name__ == '__main__':
     import numpy as np
     import cv2, os
     from tic import Tic
-    from utils import getFiles, get_yaml_data
-
-    arg = get_yaml_data('config/arg.yaml')
 
     OUTPUT_IMG_DIR = arg.get('OUTPUT_IMG_DIR')
     if not os.path.isdir(OUTPUT_IMG_DIR):
@@ -153,6 +153,5 @@ if __name__ == '__main__':
     for img_path in img_paths:
         print(img_path, end=' ')
         Tic.tic()
-        arg.update({'img_path':img_path, 'model':model})
-        cfar(arg)
+        cfar(dict_merge(arg, {'img_path':img_path, 'model':model}))
         Tic.toc()

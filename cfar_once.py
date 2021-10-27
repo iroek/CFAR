@@ -2,9 +2,9 @@ import numpy as np
 
 def cfar_one(arg):
     i,j             = arg.get('index')
-    gc              = arg.get('gc')
-    bc              = arg.get('bc')
-    al              = arg.get('al')
+    gc              = arg.get('GUARD_CELLS')
+    bc              = arg.get('BG_CELLS')
+    al              = arg.get('ALPHA')
     inputImg        = arg['inputImg']
     CFAR_UNITS      = arg['CFAR_UNITS']
     HALF_CFAR_UNITS = arg['HALF_CFAR_UNITS']
@@ -40,7 +40,3 @@ def cfar_one_improved(arg):
         return (center_cell_x, center_cell_y, 255)
     else:
         return (center_cell_x, center_cell_y, 0)
-
-def dict_merge(dict1, dict2):
-    dict2.update(dict1)
-    return(dict2) 

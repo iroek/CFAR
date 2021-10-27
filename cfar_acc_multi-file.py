@@ -8,24 +8,16 @@ import os
 from tic import Tic
 from multiprocessing import Pool
 from cfar_once import *
-
-# configs
-GUARD_CELLS = 10
-BG_CELLS    = 5
-ALPHA       = 2
-
-#path
-OUTPUT_IMG_DIR = "./test_out/"
-root='./test/'
+from utils import getFiles, get_yaml_data, dict_merge
 
 
 #2D-CA-CFAR
 def cfar(arg):
     print(arg)
-    img_path = arg.get('img_path')
-    gc       = arg.get('gc')
-    bc       = arg.get('bc')
-    al       = arg.get('al')
+    img_path    = arg.get('img_path')
+    gc          = arg.get('GUARD_CELLS')
+    bc          = arg.get('BG_CELLS')
+    al          = arg.get('ALPHA')
     inputImg    = cv2.imread(img_path, 0).astype(float)
     out_name    = os.path.basename(img_path).split('.')[0]
     estimateImg = np.zeros((inputImg.shape[0], inputImg.shape[1]), np.uint8)
@@ -44,19 +36,19 @@ def cfar(arg):
         estimateImg[p[0], p[1]] = p[2]
 
     # output
-    tmpName = OUTPUT_IMG_DIR + f"{out_name}_{gc}_{bc}_{al}.png"
-    cv2.imwrite(tmpName, estimateImg)
+    if arg.get('saveResult'):
+        tmpName = os.path.join(arg.get('OUTPUT_IMG_DIR'), f"{out_name}_{gc}_{bc}_{al}.png")
+        cv2.imwrite(tmpName, estimateImg)
     
+    return estimateImg
+
 
 if __name__=='__main__':
-    imgs=os.listdir(root)
-    
-    for img in imgs:
-        img_path=root+img
+    arg = get_yaml_data('config/arg.yaml')
+
+    img_paths = getFiles(arg.get('root'), '.jpg')    
+    for img_path in img_paths:
         Tic.tic()
         with Pool(10) as pool:
-            pool.map(cfar, [{'img_path':img_path, 'gc':GUARD_CELLS, 'bc':GUARD_CELLS, 'al':ALPHA} for ALPHA in [1.2, 1.4, 1.6, 1.8, 2.] for GUARD_CELLS in [30, 40, 50, 60] for BG_CELLS in [5,]]) 
+            pool.map(cfar, [dict_merge(arg, {'img_path':img_path, 'GUARD_CELLS':GUARD_CELLS, 'bc':GUARD_CELLS*RATIO, 'al':ALPHA}) for ALPHA in [1.2, 1.4, 1.6, 1.8, 2.] for GUARD_CELLS in [30, 40, 50, 60] for RATIO in [1,]]) 
         Tic.toc()
-
-    # with Pool(16) as pool:
-    #     pool.map(cfar, [{'img_path':root+img, 'gc':GUARD_CELLS, 'bc':BG_CELLS, 'al':ALPHA} for img in imgs]) 
