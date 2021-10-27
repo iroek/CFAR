@@ -2,6 +2,8 @@
 # from genericpath import isdir
 import torch
 from torch import nn
+import cv2, os
+import numpy as np
 # from torch._C import uint8
 # from torch.utils.data import DataLoader
 # from torchvision import datasets
@@ -139,8 +141,7 @@ def cfar(arg):
 
 
 if __name__ == '__main__':
-    import numpy as np
-    import cv2, os
+
     from tic import Tic
 
     OUTPUT_IMG_DIR = arg.get('OUTPUT_IMG_DIR')
