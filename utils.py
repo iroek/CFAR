@@ -9,7 +9,14 @@ import numpy as np
 import os, time
 import csv
 from skimage import transform, io
+import yaml
 
+def get_yaml_data(yaml_file):
+    with open(yaml_file, 'r', encoding="utf-8") as file:
+        file_data = file.read()
+        data = yaml.load(file_data, Loader=yaml.FullLoader)
+    return data
+    
 #==根据文件名读图片==#
 def read_image(filename):
     x = io.imread(filename)
