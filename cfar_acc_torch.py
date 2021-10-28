@@ -15,18 +15,7 @@ arg = get_yaml_data('config/arg.yaml')
 device = "cuda" if torch.cuda.is_available() and arg.get('useGPU', False) else "cpu"
 print("Using {} device".format(device))
 
-
-def measureCommand(fun):
-    if arg.get('measureCommand', False):
-        from tic import Tic
-        def measure(*args, **kwargs):
-            Tic.tic()
-            out = fun(*args, **kwargs)
-            Tic.toc()
-            return out
-        return measure
-    else:
-        return fun
+from measure import measureCommand
 
 
 # Define model
@@ -81,7 +70,7 @@ class Carf(nn.Module):
         back  = torch.div(back, self.areaBack)
         return torch.cat([torch.div(front, back), front], dim=0)
 
-@measureCommand
+# @measureCommand
 def cfar(arg):
     img_path    = arg.get('img_path')
     gc          = arg.get('GUARD_CELLS')
@@ -120,10 +109,42 @@ def cfar(arg):
 
     # output
     if arg.get('saveResult', False) is True and arg.get('OUTPUT_IMG_DIR', None) is not None:
-        tmpName = os.path.join(arg.get('OUTPUT_IMG_DIR'), f"{out_name}_{gc}_{bc}_{al}_{inShape}.png")
+        tmpName = os.path.join(arg.get('OUTPUT_IMG_DIR'), 
+            f"{out_name}_{gc}_{bc}_{al}_{inShape}.png"
+        )
         cv2.imwrite(tmpName, estimateImg)
 
     return estimateImg
+
+
+@measureCommand
+def carfIP(arg):
+    inputImg = arg.get('inputImg')
+    inShape  = inputImg.shape[1::-1]
+
+    out = [cfar(dict_merge(arg, {'inputImg':inputImg}))
+        for inputImg in ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))]
+    
+    out = [cv2.resize(src, inShape, interpolation=cv2.INTER_NEAREST)
+        for src in out]
+
+    out = np.max(np.array(out), axis=0)
+
+    cv2.imwrite(
+        os.path.join(
+            arg.get('OUTPUT_IMG_DIR'), 
+            "{0}_{1}_{2}_{3}_{4}.png".format(
+                os.path.basename(img_path).split('.')[0],
+                arg.get('GUARD_CELLS'),
+                arg.get('BG_CELLS'),
+                arg.get('ALPHA'),
+                inShape
+            )
+        ), 
+        out
+    )
+
+    return out
 
 
 if __name__ == '__main__':
@@ -138,7 +159,32 @@ if __name__ == '__main__':
 
     img_paths = getFiles(arg.get('root'), '.jpg')
     for img_path in img_paths:
-        print('\t', img_path)
+        print(img_path, end=' ')
         inputImg = cv2.imread(img_path, 0).astype(float)
-        for i, inputImg in enumerate(ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))):
-            cfar(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
+        carfIP(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
+
+        # inputImg = cv2.imread(img_path, 0).astype(float)
+        # for i, inputImg in enumerate(ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))):
+        #     cfar(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
+
+        # inputImg = cv2.imread(img_path, 0).astype(float)
+        # inShape = inputImg.shape[1::-1]
+        # out = [cfar(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
+        #     for inputImg in ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))]
+        # out = [cv2.resize(src, inShape, interpolation=cv2.INTER_NEAREST)
+        #     for src in out]
+        # out = np.max(np.array(out), axis=0)
+        # cv2.imwrite(
+        #     os.path.join(
+        #         arg.get('OUTPUT_IMG_DIR'), 
+        #         "{0}_{1}_{2}_{3}_{4}.png".format(
+        #             os.path.basename(img_path).split('.')[0],
+        #             arg.get('GUARD_CELLS'),
+        #             arg.get('BG_CELLS'),
+        #             arg.get('ALPHA'),
+        #             inShape
+        #         )
+        #     ), 
+        #     out
+        # )
+            
