@@ -119,6 +119,10 @@ def cfar(arg):
 
 @measureCommand
 def carfIP(arg):
+    
+    from image_pyramid import ImagePyramid
+
+    img_path = arg.get('img_path')
     inputImg = arg.get('inputImg')
     inShape  = inputImg.shape[1::-1]
 
@@ -147,9 +151,7 @@ def carfIP(arg):
     return out
 
 
-if __name__ == '__main__':
-
-    from image_pyramid import ImagePyramid
+if __name__ == '__main__': 
 
     OUTPUT_IMG_DIR = arg.get('OUTPUT_IMG_DIR')
     if not os.path.isdir(OUTPUT_IMG_DIR):
@@ -162,29 +164,4 @@ if __name__ == '__main__':
         print(img_path, end=' ')
         inputImg = cv2.imread(img_path, 0).astype(float)
         carfIP(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
-
-        # inputImg = cv2.imread(img_path, 0).astype(float)
-        # for i, inputImg in enumerate(ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))):
-        #     cfar(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
-
-        # inputImg = cv2.imread(img_path, 0).astype(float)
-        # inShape = inputImg.shape[1::-1]
-        # out = [cfar(dict_merge(arg, {'img_path':img_path, 'inputImg':inputImg, 'model':model}))
-        #     for inputImg in ImagePyramid()(inputImg, arg.get('ratio',0.7071), arg.get('layers',2))]
-        # out = [cv2.resize(src, inShape, interpolation=cv2.INTER_NEAREST)
-        #     for src in out]
-        # out = np.max(np.array(out), axis=0)
-        # cv2.imwrite(
-        #     os.path.join(
-        #         arg.get('OUTPUT_IMG_DIR'), 
-        #         "{0}_{1}_{2}_{3}_{4}.png".format(
-        #             os.path.basename(img_path).split('.')[0],
-        #             arg.get('GUARD_CELLS'),
-        #             arg.get('BG_CELLS'),
-        #             arg.get('ALPHA'),
-        #             inShape
-        #         )
-        #     ), 
-        #     out
-        # )
             

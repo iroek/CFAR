@@ -10,6 +10,7 @@ sys.setrecursionlimit(100000)
 class Region:
     
     def __init__(self, id, pixs):
+        # print(f'region {id} init')
         self.id = id
         self.pixs = pixs
 
@@ -53,7 +54,7 @@ class Region:
 
 
 def regionGrowing(img, i, j):
-    img[i, j] = 100
+    img[i, j] = 0
     res = [(i,j)]
     for m,n in [(i-1, j-1), (i-1, j), (i-1, j+1), (i, j+1), (i+1, j+1), (i+1, j), (i+1, j-1), (i, j-1)]:
         if m>=0 and n>=0 and m<img.shape[0] and n<img.shape[1]:
@@ -63,17 +64,25 @@ def regionGrowing(img, i, j):
 
 
 @measureCommand
-def instanceDetect(img):
+def instanceDetect(img, stride):
     img = img.copy()
     if len(img.shape) == 3:
         img = img[:,:,0]
     id = 0
     res = list()
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            if img[i, j] == 255:
-                res.append(Region(id, regionGrowing(img, i, j)))
-                id += 1
+    for i in range(img.shape[0]//stride):
+        for j in range(img.shape[1]//stride):
+            m, n = i*stride, j*stride
+            if img[m:m+stride, n:n+stride].sum() >= 255:
+                # print(m,n)
+                for x in range(stride):
+                    for y in range(stride):
+                        if img[m+x, n+y] == 255:
+                            region = Region(id, regionGrowing(img, m+x, n+y))
+                            res.append(region)
+                            for pix in region.pixs:
+                                img[pix] = 0
+                            id += 1
     return res
     
 
@@ -100,9 +109,11 @@ def drawRes(img, res):
 
 if __name__ == '__main__':
 
-    
+    import time
 
-    img = np.zeros(shape=(1000, 2000, 3), dtype=np.uint8) + 200
+    import matplotlib.pyplot as plt
+
+    img = np.zeros(shape=(1000, 2000, 3), dtype=np.uint8)
     o1  = np.zeros(shape=(50, 50, 3), dtype=np.uint8) + 255
 
     for x,y in [(10,10), (300,50), (100,800), (200,1000), (900, 1400), (500, 1300)]:
@@ -111,7 +122,15 @@ if __name__ == '__main__':
     # cv2.namedWindow('img', cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO | cv2.WINDOW_GUI_EXPANDED)
     # cv2.imshow('img', img)
     
-    res = instanceDetect(img)
+    # ts = list()
+    # for stride in range(1, 100):
+    #     t = time.time()  
+    #     res = instanceDetect(img, stride)
+    #     ts.append(time.time() - t)
+    # plt.plot(10*np.log10(np.array(ts)/min(ts)))
+    # plt.show()
+
+    res = instanceDetect(img, 30)
 
     img = drawRes(img, res)
 

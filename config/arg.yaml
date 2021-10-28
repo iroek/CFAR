@@ -1,18 +1,18 @@
 # cfar
-GUARD_CELLS: 30
-BG_CELLS: 30
-ALPHA: 1.8
+GUARD_CELLS: 15
+BG_CELLS: 15
+ALPHA: 2
 
 # image pyramid
 ratio: 0.7071
-layers: 2
+layers: 4
 
 # path
-OUTPUT_IMG_DIR: 'test1_out'
-root: 'test1'
+OUTPUT_IMG_DIR: 'test_out'
+root: 'test'
 
 # configs
-saveResult: True     # save to file
+saveResult: False     # save to file
 cropEdge: True       # reset edge pixs to zero, something looks like 'reversed padding'
 threading: 10
 useGPU: True
